@@ -1,8 +1,5 @@
 package mediawiki_api;
 
-import gui_support.gui_settings;
-import gui_support.gui_settings.SETTINGS_BOOL;
-
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
@@ -107,19 +104,13 @@ public class api_retrieve{
 
 	/**
 	 * Return the base URL for making API retrievals over en.wp. Note that 
-	 * this is fixed aside from the (HTTP|HTTPS) protocol choice, which
-	 * is implemented as a persistent user option
+	 * this is fixed aside from an internal code override option.
 	 * @return Base URL for making API retrievals over en.wp.
 	 */
 	public static String base_url(){
 		if(BASE_URL_OVERRIDE != null)
 			return(BASE_URL_OVERRIDE);
-		else{
-			String base = "en.wikipedia.org/w/api.php?action=query";
-			if(gui_settings.get_bool_def(SETTINGS_BOOL.options_https, false))
-					return("https://" + base);
-			else return("http://" + base);
-		} // alllow manual override of this logic
+		else return("https://en.wikipedia.org/w/api.php?action=query");
 	}
 	
 	
@@ -760,7 +751,7 @@ public class api_retrieve{
 		//if((cookie != null) && (!cookie.equals("")))
 		//	conn2.setRequestProperty("Cookie", cookie);
 		//InputStream in2 = stream_from_url(conn2, api_retrieve.NUM_HTTP_RETRIES);
-		//System.out.println(wiki_utils.capture_stream(in2));
+		//System.out.println(stiki_utils.capture_stream(in2));
 		
 			// Having an InputStream, parse the XML it contains
 		SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -1131,6 +1122,7 @@ public class api_retrieve{
 		url = url.substring(0, url.length()-1); // Trim off trailing bar
 		url += "&uclimit=500&ucstart=" + timestamp;
 		url += "&ucprop=ids&ucdir=newer&format=xml";
+		url += "&rawcontinue=1"; // 2015-JUL: Needed if continuation
 		return(url);	
 	}
 
@@ -1160,6 +1152,7 @@ public class api_retrieve{
 		if(ns != Integer.MAX_VALUE)
 			url += "&ucnamespace=" + ns;
 		url += "&format=xml";
+		url += "&rawcontinue=1"; // 2015-JUL: Needed if continuation
 		return(url);
 	}
 	
@@ -1208,6 +1201,7 @@ public class api_retrieve{
 			url += "&cmcontinue=" + continue_key;
 		url += "&cmlimit=500";
 		url += "&format=xml";
+		url += "&rawcontinue=1"; // 2015-JUL: Needed if continuation
 		return(url);
 	}
 	
@@ -1228,6 +1222,7 @@ public class api_retrieve{
 		if(start_time != null)
 			url+= "&drstart=" + start_time;
 		url += "&drlimit=1&format=xml";
+		url += "&rawcontinue=1"; // 2015-JUL: Needed if continuation
 		return(url);
 	}
 	
@@ -1254,6 +1249,7 @@ public class api_retrieve{
 			url += "&clcontinue=" + continue_key;
 		url += "&cllimit=500";
 		url += "&format=xml";
+		url += "&rawcontinue=1"; // 2015-JUL: Needed if continuation
 		return(url);
 	}
 	
